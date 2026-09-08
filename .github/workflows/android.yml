@@ -63,10 +63,10 @@ jobs:
         if: steps.unit.outcome == 'failure' || steps.debug.outcome == 'failure'
         run: |
           if [ "${{ steps.unit.outcome }}" = "failure" ]; then
-            tail -n 12 unit-test.log | while IFS= read -r line; do echo "::error file=unit-test.log,line=1::$line"; done
+            grep -E 'e: |error:|FAILURE|What went wrong|Execution failed|Could not|Unresolved reference|Compilation error' unit-test.log | tail -n 25 | while IFS= read -r line; do echo "::error file=unit-test.log,line=1::$line"; done
           fi
           if [ "${{ steps.debug.outcome }}" = "failure" ]; then
-            tail -n 12 debug-build.log | while IFS= read -r line; do echo "::error file=debug-build.log,line=1::$line"; done
+            grep -E 'e: |error:|FAILURE|What went wrong|Execution failed|Could not|Unresolved reference|Compilation error' debug-build.log | tail -n 25 | while IFS= read -r line; do echo "::error file=debug-build.log,line=1::$line"; done
           fi
       - name: Stop after verification failure
         if: steps.unit.outcome == 'failure' || steps.debug.outcome == 'failure'
