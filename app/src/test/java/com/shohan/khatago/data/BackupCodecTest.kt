@@ -13,7 +13,11 @@ class BackupCodecTest {
     @Test fun roundTripPreservesRecordsAndPayments() {
         val record = FinancialRecord("r1", RecordType.BORROWED, "Emergency cash", "A friend", "", 250000, LocalDate.now().toEpochDay().toInt(), null, null, null, "", null, null)
         val payment = Payment("p1", "r1", 50000, LocalDate.now().toEpochDay().toInt(), "Cash", "", "", 1L)
-        val decoded = BackupCodec.decode(BackupCodec.encode(BackupSnapshot(1, 2L, AppSettings("Shohan", "BDT", true, true), listOf(record), listOf(payment))))
+        val decoded = try {
+            BackupCodec.decode(BackupCodec.encode(BackupSnapshot(1, 2L, AppSettings("Shohan", "BDT", true, true), listOf(record), listOf(payment))))
+        } catch (error: Exception) {
+            throw AssertionError("Backup decode failed: ${error::class.java.name}: ${error.message}", error)
+        }
         assertEquals("Shohan", decoded.settings.name)
         assertEquals(1, decoded.records.size)
         assertEquals(50000L, decoded.payments.single().amountMinor)

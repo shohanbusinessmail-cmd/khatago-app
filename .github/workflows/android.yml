@@ -64,7 +64,8 @@ jobs:
         run: |
           if [ "${{ steps.unit.outcome }}" = "failure" ]; then
             grep -E 'e: |error:|FAILURE|What went wrong|Execution failed|Could not|Unresolved reference|Compilation error|FAILED|Failure|Assertion|expected|but was|Tests run|There were failing|at com.shohan' unit-test.log | tail -n 25 | while IFS= read -r line; do echo "::error file=unit-test.log,line=1::$line"; done
-            grep -Rho '<failure[^>]*\|<error[^>]*' app/build/test-results 2>/dev/null | tail -n 20 | while IFS= read -r line; do echo "::error file=test-results.xml,line=1::$line"; done
+            grep -Rho '<failure[^>]*\|<error[^>]*' app/build/test-results 2>/dev/null | tail -n 20
+            grep -Rho 'Backup decode failed[^<]*' app/build 2>/dev/null | tail -n 10 | while IFS= read -r line; do echo "::error file=test-results.xml,line=1::$line"; done
           fi
           if [ "${{ steps.debug.outcome }}" = "failure" ]; then
             grep -E 'e: |error:|FAILURE|What went wrong|Execution failed|Could not|Unresolved reference|Compilation error' debug-build.log | tail -n 25 | while IFS= read -r line; do echo "::error file=debug-build.log,line=1::$line"; done
