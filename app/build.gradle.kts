@@ -61,7 +61,7 @@ dependencies {
 
     testImplementation(libs.junit)
     // Android's framework org.json is stubbed in local JVM tests; this test-only implementation keeps backup tests deterministic.
-    testImplementation(libs.org.json)
+    testImplementation(libs.jsonTest)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.espresso.core)
