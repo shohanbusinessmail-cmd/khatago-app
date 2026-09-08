@@ -92,6 +92,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _message.value = "${record.title} deleted"
     }
 
+    fun deletePayment(payment: Payment) = viewModelScope.launch {
+        repository.deletePayment(payment.id)
+        _message.value = "Payment deleted and balance recalculated"
+    }
+
+    fun editPayment(record: FinancialRecord, existing: Payment, amountText: String, date: LocalDate, method: String, reference: String, note: String) = viewModelScope.launch {
+        val amount = MoneyMath.validateAmount(amountText)
+        if (amount == null || amount <= 0L) { _message.value = "Enter a valid payment amount."; return@launch }
+        repository.editPayment(record, existing, amount, date.toEpochDay().toInt(), method.trim(), reference.trim(), note.trim()).fold(
+            onSuccess = { _message.value = "Payment updated" }, onFailure = { _message.value = it.message ?: "Payment could not be updated." }
+        )
+    }
+
     suspend fun makeBackup(): String {
         val snapshot = BackupSnapshot(AppConstants.BACKUP_SCHEMA_VERSION, System.currentTimeMillis(), settings.value, records.value, payments.value)
         return BackupCodec.encode(snapshot)

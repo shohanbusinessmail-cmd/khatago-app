@@ -108,7 +108,7 @@ private fun MainShell(viewModel: MainViewModel) {
             NavHost(navController, startDestination = "home", modifier = Modifier.padding(padding).statusBarsPadding()) {
                 composable("home") { HomeScreen(viewModel, onAdd = { addPreset = it; showAdd = true }, onOpenRecords = { navController.navigate("records") }) }
                 composable("records") { RecordsScreen(viewModel, onAdd = { addPreset = it; showAdd = true }) }
-                composable("payments") { PaymentsScreen(viewModel, onRecordPayment = { addPreset = null; showAdd = true }) }
+                composable("payments") { PaymentsScreen(viewModel, onRecordPayment = { addPreset = null; showAdd = true }, onDeletePayment = viewModel::deletePayment) }
                 composable("analytics") { AnalyticsScreen(viewModel) }
                 composable("more") { MoreScreen(viewModel, onRequestNotifications = { if (Build.VERSION.SDK_INT >= 33) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS) }) }
             }

@@ -13,7 +13,7 @@ abstract class FinanceDatabase : RoomDatabase() {
         @Volatile private var INSTANCE: FinanceDatabase? = null
         fun get(context: Context): FinanceDatabase = INSTANCE ?: synchronized(this) {
             INSTANCE ?: Room.databaseBuilder(context, FinanceDatabase::class.java, "khatago.db")
-                .fallbackToDestructiveMigration()
+                // No destructive fallback: a future schema change must ship an explicit migration.
                 .build()
                 .also { INSTANCE = it }
         }

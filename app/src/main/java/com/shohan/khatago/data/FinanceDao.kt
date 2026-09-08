@@ -27,6 +27,12 @@ interface FinanceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPayments(payments: List<PaymentEntity>)
 
+    @Query("DELETE FROM payments WHERE id = :id")
+    suspend fun deletePayment(id: String)
+
+    @Query("SELECT * FROM payments WHERE id = :id LIMIT 1")
+    suspend fun getPayment(id: String): PaymentEntity?
+
     @Query("DELETE FROM payments")
     suspend fun deleteAllPayments()
 

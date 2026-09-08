@@ -63,6 +63,8 @@ private data class ActionOption(val type: RecordType?, val label: String, val de
 @Composable
 fun AddRecordSheet(viewModel: MainViewModel, preset: RecordType?, onDismiss: () -> Unit) {
     val records by viewModel.records.collectAsState()
+    val settings by viewModel.settings.collectAsState()
+    val currency = com.shohan.khatago.domain.CurrencyOption.find(settings.currencyCode)
     var type by remember { mutableStateOf(preset) }
     var paymentMode by remember { mutableStateOf(false) }
     var paymentRecord by remember { mutableStateOf<FinancialRecord?>(null) }
@@ -115,7 +117,7 @@ fun AddRecordSheet(viewModel: MainViewModel, preset: RecordType?, onDismiss: () 
                 Text("Select an open balance", color = Color(0xFF5E6E65))
                 if (records.none { it.type.isObligation && it.remainingMinor > 0 }) Text("There are no unpaid records yet. Add a credit, loan or lending record first.", color = Color(0xFF5E6E65))
                 records.filter { it.type.isObligation && it.remainingMinor > 0 }.forEach { record ->
-                    AppCard(Modifier.fillMaxWidth(), onClick = { paymentRecord = record }) { RecordRow(record, com.shohan.khatago.domain.CurrencyOption.find("BDT"), showStatus = false) }
+                    AppCard(Modifier.fillMaxWidth(), onClick = { paymentRecord = record }) { RecordRow(record, currency, showStatus = false) }
                 }
                 paymentRecord?.let { selected ->
                     Text("Payment for ${selected.title}", style = MaterialTheme.typography.titleMedium, color = EmeraldDark)

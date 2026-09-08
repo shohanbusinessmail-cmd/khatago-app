@@ -2,6 +2,7 @@ package com.shohan.khatago.data
 
 import com.shohan.khatago.domain.AppSettings
 import com.shohan.khatago.domain.BackupSnapshot
+import com.shohan.khatago.domain.CurrencyOption
 import com.shohan.khatago.domain.BackupValidationException
 import com.shohan.khatago.domain.FinancialRecord
 import com.shohan.khatago.domain.Payment
@@ -50,7 +51,7 @@ object BackupCodec {
                 schemaVersion = schema, exportedAt = root.optLong("exportedAt", 0L),
                 settings = AppSettings(
                     name = settingsJson.optString("name"),
-                    currencyCode = settingsJson.optString("currencyCode", "BDT"),
+                    currencyCode = CurrencyOption.find(settingsJson.optString("currencyCode", "BDT")).code,
                     onboardingComplete = settingsJson.optBoolean("onboardingComplete", true),
                     notificationsEnabled = settingsJson.optBoolean("notificationsEnabled", true)
                 ), records = records, payments = payments

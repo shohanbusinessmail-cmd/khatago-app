@@ -20,6 +20,24 @@ class FinanceRepository(private val database: FinanceDatabase) {
 
     suspend fun saveRecord(record: FinancialRecord) = dao.upsertRecord(record.toEntity())
     suspend fun deleteRecord(id: String) = dao.deleteRecord(id)
+    suspend fun deletePayment(id: String) = dao.deletePayment(id)
+
+    suspend fun editPayment(
+        record: FinancialRecord,
+        existing: Payment,
+        amountMinor: Long,
+        paidOnEpochDay: Int,
+        method: String,
+        reference: String,
+        note: String
+    ): Result<Payment> {
+        if (amountMinor <= 0L) return Result.failure(IllegalArgumentException("Payment must be greater than zero."))
+        val maximum = record.remainingMinor + existing.amountMinor
+        if (amountMinor > maximum) return Result.failure(IllegalArgumentException("Payment cannot be greater than the remaining balance."))
+        val updated = existing.copy(amountMinor = amountMinor, paidOnEpochDay = paidOnEpochDay, method = method, reference = reference, note = note)
+        dao.insertPayment(updated.toEntity())
+        return Result.success(updated)
+    }
 
     suspend fun addPayment(
         record: FinancialRecord,
