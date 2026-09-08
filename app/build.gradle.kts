@@ -60,6 +60,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
+    // Android's framework org.json is stubbed in local JVM tests; this test-only implementation keeps backup tests deterministic.
+    testImplementation(libs.org.json)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.espresso.core)
