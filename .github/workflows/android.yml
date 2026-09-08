@@ -75,6 +75,8 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Run connected tests on API 35 emulator
+        id: instrument
+        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -83,4 +85,19 @@ jobs:
           profile: Pixel_2
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           disable-animations: true
-          script: ./gradlew connectedDebugAndroidTest --stacktrace
+          script: |
+            set -o pipefail
+            ./gradlew connectedDebugAndroidTest --stacktrace 2>&1 | tee instrumentation.log
+      - name: Upload instrumentation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: khatago-instrumentation-diagnostics-${{ github.sha }}
+          path: |
+            instrumentation.log
+            app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/
+          if-no-files-found: ignore
+      - name: Fail if instrumentation failed
+        if: steps.instrument.outcome == 'failure'
+        run: exit 1
