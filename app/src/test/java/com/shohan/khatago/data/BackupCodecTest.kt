@@ -16,6 +16,7 @@ class BackupCodecTest {
         val decoded = try {
             BackupCodec.decode(BackupCodec.encode(BackupSnapshot(1, 2L, AppSettings("Shohan", "BDT", true, true), listOf(record), listOf(payment))))
         } catch (error: Exception) {
+            System.err.println("BACKUP-ERROR:${error::class.java.name}:${error.message}")
             throw AssertionError("Backup decode failed: ${error::class.java.name}: ${error.message}", error)
         }
         assertEquals("Shohan", decoded.settings.name)
