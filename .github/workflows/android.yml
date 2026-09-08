@@ -40,13 +40,25 @@ jobs:
         with:
           name: khatago-unit-test-log
           path: unit-test.log
-      - name: Stop after failed unit tests
-        if: steps.unit.outcome == 'failure'
-        run: exit 1
       - name: Debug APK
-        run: ./gradlew assembleDebug
+        id: debug
+        if: always()
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --stacktrace 2>&1 | tee debug-build.log
+      - name: Upload debug build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: khatago-debug-build-log
+          path: debug-build.log
       - name: Upload debug APK
+        if: steps.debug.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: khatago-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Stop after verification failure
+        if: steps.unit.outcome == 'failure' || steps.debug.outcome == 'failure'
+        run: exit 1
