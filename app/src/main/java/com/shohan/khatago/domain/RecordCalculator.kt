@@ -13,8 +13,8 @@ object RecordCalculator {
         return when {
             days < 0 -> RecordStatus.OVERDUE
             days == 0L -> RecordStatus.DUE_TODAY
-            days <= 7L -> RecordStatus.DUE_SOON
             record.paidMinor > 0L -> RecordStatus.PARTIALLY_PAID
+            days <= 7L -> RecordStatus.DUE_SOON
             else -> RecordStatus.UPCOMING
         }
     }
