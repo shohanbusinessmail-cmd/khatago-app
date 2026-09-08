@@ -29,7 +29,20 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Unit tests
-        run: ./gradlew test
+        id: unit
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          ./gradlew test --stacktrace 2>&1 | tee unit-test.log
+      - name: Upload unit-test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: khatago-unit-test-log
+          path: unit-test.log
+      - name: Stop after failed unit tests
+        if: steps.unit.outcome == 'failure'
+        run: exit 1
       - name: Debug APK
         run: ./gradlew assembleDebug
       - name: Upload debug APK
