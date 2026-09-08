@@ -59,6 +59,7 @@ import java.time.LocalDate
 
 private data class ActionOption(val type: RecordType?, val label: String, val description: String, val icon: androidx.compose.ui.graphics.vector.ImageVector, val payment: Boolean = false)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRecordSheet(viewModel: MainViewModel, preset: RecordType?, onDismiss: () -> Unit) {
     val records by viewModel.records.collectAsState()
